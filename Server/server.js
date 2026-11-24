@@ -5,6 +5,7 @@ import dotenv from "dotenv";
 
 import authRoutes from "./routes/authRoutes.js";
 import adminRoutes from "./routes/adminRoutes.js";
+import providerRoutes from "./routes/providerRoutes.js";
 
 // Load environment variables
 dotenv.config();
@@ -37,6 +38,7 @@ app.get("/api/health", (req, res) => {
 // API Routes
 app.use("/api/auth", authRoutes);
 app.use("/api/admin", adminRoutes);  
+app.use("/api/provider", providerRoutes);
 
 // 404 Route Handler
 app.use((req, res, next) => {
@@ -77,4 +79,3 @@ const startServer = async () => {
 };
 
 startServer();
-

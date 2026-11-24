@@ -27,12 +27,16 @@ api.interceptors.request.use(
 api.interceptors.response.use(
   (response) => response,
   (error) => {
-    if (error.response && error.response.status === 401) {
+    const isAuthEndpoint =
+      error.config?.url?.includes("/auth/admin/login") ||
+      error.config?.url?.includes("/auth/login");
+
+    if (error.response && error.response.status === 401 && !isAuthEndpoint) {
       // Clear token and user if unauthorized
       localStorage.removeItem("admin_token");
       localStorage.removeItem("admin_user");
-      if (window.location.pathname !== "/login") {
-        window.location.href = "/login";
+      if (window.location.pathname !== "/") {
+        window.location.href = "/";
       }
     }
     return Promise.reject(error);

@@ -1,8 +1,8 @@
-import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { Toaster } from "react-hot-toast";
 import { AuthProvider } from "./context/AuthContext";
-import { ProtectedRoute, PublicRoute } from "./components/ProtectedRoute";
-import Login from "./pages/Login";
+import { ProtectedRoute } from "./components/ProtectedRoute";
+import AdminLandingPage from "./pages/AdminLandingPage";
 import Dashboard from "./pages/Dashboard";
 
 function App() {
@@ -20,40 +20,20 @@ function App() {
               borderRadius: "0.75rem",
               fontSize: "0.875rem",
             },
-            success: {
-              iconTheme: {
-                primary: "#10b981",
-                secondary: "#1e293b",
-              },
-            },
-            error: {
-              iconTheme: {
-                primary: "#ef4444",
-                secondary: "#1e293b",
-              },
-            },
           }}
         />
 
         <Routes>
-          {/* Public Login Route (Redirects to /dashboard if already logged in) */}
-          <Route
-            path="/login"
-            element={
-              <PublicRoute>
-                <Login />
-              </PublicRoute>
-            }
-          />
+          {/* Admin Portal Landing Page with Navbar, Main Content, Footer & Login Modal */}
+          <Route path="/" element={<AdminLandingPage />} />
 
-          {/* Protected Routes (Admin only) */}
+          {/* Protected Admin Dashboard */}
           <Route element={<ProtectedRoute />}>
             <Route path="/dashboard" element={<Dashboard />} />
           </Route>
 
-          {/* Default Redirect */}
-          <Route path="/" element={<Navigate to="/dashboard" replace />} />
-          <Route path="*" element={<Navigate to="/dashboard" replace />} />
+          {/* Fallback route */}
+          <Route path="*" element={<AdminLandingPage />} />
         </Routes>
       </AuthProvider>
     </BrowserRouter>

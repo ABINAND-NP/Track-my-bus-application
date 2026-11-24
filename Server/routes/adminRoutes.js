@@ -1,13 +1,20 @@
 import express from "express";
-import { getDashboardStats } from "../controllers/adminController.js";
+import {
+  getDashboardStats,
+  createPlatformEmployee,
+  getPlatformEmployees,
+} from "../controllers/adminController.js";
 import { verifyToken, authorizeRoles } from "../middleware/authMiddleware.js";
 
 const router = express.Router();
 
-// Protected admin routes
-router.use(verifyToken, authorizeRoles("admin"));
+// Stats: accessible by admin and platform_employee
+router.get("/stats", verifyToken, authorizeRoles("admin", "platform_employee"), getDashboardStats);
 
-router.get("/stats", getDashboardStats);  
+// Employees: GET accessible by admin and platform_employee
+router.get("/employees", verifyToken, authorizeRoles("admin", "platform_employee"), getPlatformEmployees);
+
+// Employees: POST (Create HR) restricted to admin only
+router.post("/employees", verifyToken, authorizeRoles("admin"), createPlatformEmployee);
 
 export default router;
-
