@@ -22,7 +22,7 @@ import {
 import { createOperatorApi, getOperatorsApi, deleteOperatorApi } from "../../services/api";
 import { useAuth } from "../../context/AuthContext";
 import ConfirmDeleteModal from "../../components/ConfirmDeleteModal";
-import toast from "react-hot-toast";
+import toast from "react-hot-toast"; 
 
 const DEFAULT_OPERATORS = [
   {
@@ -70,6 +70,9 @@ const DEFAULT_OPERATORS = [
 ];
 
 export default function CreateBusOperator() {
+  const { user } = useAuth();
+  const isOperator = user?.role === "operator";
+
   const [operatorList, setOperatorList] = useState(DEFAULT_OPERATORS);
   const [isLoadingList, setIsLoadingList] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -189,8 +192,7 @@ export default function CreateBusOperator() {
       }
       setOperatorList((prev) => prev.filter((op) => op._id !== deleteTarget._id));
       toast.success(
-        `Bus Operator "${deleteTarget.name}" (${
-          deleteTarget.operatorDetails?.operatorType?.toUpperCase() || "OPERATOR"
+        `Bus Operator "${deleteTarget.name}" (${deleteTarget.operatorDetails?.operatorType?.toUpperCase() || "OPERATOR"
         }) deleted successfully.`
       );
       setDeleteTarget(null);
@@ -213,6 +215,26 @@ export default function CreateBusOperator() {
 
     return matchesSearch && matchesType;
   });
+
+  if (isOperator) {
+    return (
+      <div className="p-8 rounded-2xl bg-slate-900 border border-slate-800 text-center space-y-4 max-w-lg mx-auto mt-12">
+        <div className="w-12 h-12 rounded-xl bg-cyan-500/15 border border-cyan-500/30 text-cyan-400 flex items-center justify-center mx-auto">
+          <Bus className="w-6 h-6" />
+        </div>
+        <h3 className="text-lg font-bold text-white">Operator Enrollment Restricted</h3>
+        <p className="text-xs text-slate-400 leading-relaxed">
+          Enrolling drivers and conductors is reserved for Service Providers and Staff (HR). As a registered operator, your credentials and active shift details are available from your dashboard.
+        </p>
+        <Link
+          to="/dashboard"
+          className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl text-xs font-bold text-slate-950 bg-gradient-to-r from-emerald-400 to-cyan-400 hover:from-emerald-300 hover:to-cyan-300 transition-all"
+        >
+          Return to My Duty & Route
+        </Link>
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-8">
@@ -268,11 +290,10 @@ export default function CreateBusOperator() {
                   <button
                     type="button"
                     onClick={() => setFormData((prev) => ({ ...prev, operatorType: "driver" }))}
-                    className={`py-3 px-4 rounded-xl text-xs font-bold flex items-center justify-center gap-2 border transition-all ${
-                      formData.operatorType === "driver"
+                    className={`py-3 px-4 rounded-xl text-xs font-bold flex items-center justify-center gap-2 border transition-all ${formData.operatorType === "driver"
                         ? "bg-cyan-500/15 border-cyan-500 text-cyan-300 shadow-sm shadow-cyan-500/20"
                         : "bg-slate-950 border-slate-800 text-slate-400 hover:text-white"
-                    }`}
+                      }`}
                   >
                     <span>Driver</span>
                   </button>
@@ -280,11 +301,10 @@ export default function CreateBusOperator() {
                   <button
                     type="button"
                     onClick={() => setFormData((prev) => ({ ...prev, operatorType: "conductor" }))}
-                    className={`py-3 px-4 rounded-xl text-xs font-bold flex items-center justify-center gap-2 border transition-all ${
-                      formData.operatorType === "conductor"
+                    className={`py-3 px-4 rounded-xl text-xs font-bold flex items-center justify-center gap-2 border transition-all ${formData.operatorType === "conductor"
                         ? "bg-amber-500/15 border-amber-500 text-amber-300 shadow-sm shadow-amber-500/20"
                         : "bg-slate-950 border-slate-800 text-slate-400 hover:text-white"
-                    }`}
+                      }`}
                   >
                     <Ticket className="w-4 h-4" />
                     <span>Conductor</span>
@@ -493,11 +513,10 @@ export default function CreateBusOperator() {
                           <td className="px-5 py-4 whitespace-nowrap">
                             <div className="flex items-center gap-3">
                               <div
-                                className={`w-8 h-8 rounded-xl flex items-center justify-center font-bold text-xs uppercase ${
-                                  isDriver
+                                className={`w-8 h-8 rounded-xl flex items-center justify-center font-bold text-xs uppercase ${isDriver
                                     ? "bg-cyan-500/15 text-cyan-400"
                                     : "bg-amber-500/15 text-amber-400"
-                                }`}
+                                  }`}
                               >
                                 {op.name[0]}
                               </div>
@@ -581,9 +600,8 @@ export default function CreateBusOperator() {
         onClose={closeDeleteConfirm}
         onConfirm={handleConfirmDelete}
         isDeleting={isDeleting}
-        title={`Delete Bus Operator (${
-          deleteTarget?.operatorDetails?.operatorType === "conductor" ? "Conductor" : "Driver"
-        })`}
+        title={`Delete Bus Operator (${deleteTarget?.operatorDetails?.operatorType === "conductor" ? "Conductor" : "Driver"
+          })`}
         itemName={deleteTarget?.name || ""}
         itemRole={deleteTarget?.operatorDetails?.operatorType === "conductor" ? "Conductor" : "Driver"}
       />
